@@ -261,12 +261,11 @@ class fluctuation_analysis(object):
 		nlp = self.bridge.nonlinear_params()
 		keys = nlp.keys()
 		p_opt = [nlp[k] for k in keys]
-
+		print nlp
 		if len(nlp):
-			bb = []
-			for k in keys:
-				bb.append(bounds[self.color][k])
-			
+			bb = [bounds[self.color][k]
+						for k in keys]
+
 			p_opt = opt.fmin_l_bfgs_b(func=self.erf, x0=p_opt, args=(keys,), bounds=bb, approx_grad=True)[0]
 
 		else:
@@ -277,11 +276,8 @@ class fluctuation_analysis(object):
 
 	def __call__(self, y, BOX_SIZE=None, STRIDE=1):
 
-		try:
-			self.checkin_args(y, BOX_SIZE, STRIDE)	# check and store all arguments
-		except:
-			return self.bridge.params, LARGE
-
+		try:	self.checkin_args(y, BOX_SIZE, STRIDE)	# check and store all arguments
+		except:	return self.bridge.params, LARGE
 
 		self.prepare_data()			# compute the average across y boxes
 		chi_2 = self.optimize_params()
